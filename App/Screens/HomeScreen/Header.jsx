@@ -5,7 +5,7 @@ import Colors from '../../Utils/Colors';
 import { FontAwesome } from '@expo/vector-icons';
 import jwt_decode, { jwtDecode } from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import Path from '../../Utils/Api'; // Assuming Path is correctly imported
 const Header =  ({navigation} ) => {
 
     const [userId, setUserId] = useState('');
@@ -16,55 +16,41 @@ const Header =  ({navigation} ) => {
       }, []);
     
     
-      const showInformation = async ()=>{
-  
-        const token = await AsyncStorage.getItem('token')
-        const decoded  :JwtPayload=  jwtDecode(token) ;
+      const showInformation = async () => {
+        const token = await AsyncStorage.getItem('token');
+        const decoded = jwtDecode(token);
         console.log(decoded);
-        interface JwtPayload {
-          accountId: string;
-      }
-
-      
-      const accountId = decoded.accountId;
-      console.log (accountId)
-      try {
-        const query = `
-        query {
-          getUserNamebyID(id: "${accountId}") {
-            name
-            id
-          }
+    
+        const accountId = decoded.accountId;
+        console.log(accountId);
+    
+        try {
+            const query = `
+                query {
+                    getUserNamebyID(id: "${accountId}") {
+                        name
+                        id
+                    }
+                }
+            `;
+            const response = await fetch(Path, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query }),
+            });
+    
+            const json = await response.json();
+            const userName = json.data.getUserNamebyID.name;
+            const userId = json.data.getUserNamebyID.id;
+            setName(userName);
+            setUserId(userId);
+        } catch (error) {
+            console.error('Error fetching name:', error);
         }
-      `;
-      const response = await fetch('http://172.20.10.3:3000/graphql', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ query }),
-        });
-  
-        const json = await response.json();
-        const userName = json.data.getUserNamebyID.name;
-        const userId = json.data.getUserNamebyID.id ;
-        setName(userName);
-        setUserId(userId);
-  
-  
-      const variables = {};
-  
-  
-  
-      }
-        
-      catch (error) {
-        console.error('Error fetching name:', error);
-      }
-      };
-      const goToJobRegistration = () => {
-        navigation.navigate('JobRegistion');
-      };
+    };
+    
       
       
       

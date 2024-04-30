@@ -5,7 +5,7 @@ import { ClerkProvider, SignedIn, SignedOut } from '@clerk/clerk-expo';
 import { NavigationContainer } from '@react-navigation/native';
 import TabNavigation from './App/Navigations/TabNavigation';
 import LoginNavigation from './App/Navigations/LoginNavigation'
-
+import BookingNavigation from './App/Navigations/BookingNavigation'
 import { useFonts } from 'expo-font';
 
 export default function App() {
@@ -22,6 +22,7 @@ export default function App() {
     
       <NavigationContainer>
         <LoginNavigation/>
+       
       </NavigationContainer>
 
       <StatusBar style="auto" />
