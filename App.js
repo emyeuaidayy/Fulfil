@@ -5,7 +5,9 @@ import { ClerkProvider, SignedIn, SignedOut } from '@clerk/clerk-expo';
 import { NavigationContainer } from '@react-navigation/native';
 import TabNavigation from './App/Navigations/TabNavigation';
 import LoginNavigation from './App/Navigations/LoginNavigation'
+
 import { useFonts } from 'expo-font';
+
 export default function App() {
   const [fontsLoaded] = useFonts({
     'outfit': require('./assets/fonts/Outfit-Regular.ttf'),
@@ -15,21 +17,15 @@ export default function App() {
   });
   return (
     <ClerkProvider publishableKey='pk_test_ZGVsaWNhdGUtaGVycmluZy0wLmNsZXJrLmFjY291bnRzLmRldiQ'>
+    
     <View style={styles.container}>
-     
-     {/* Sign In Component  */}
-      <SignedIn>
-      <NavigationContainer>
-        <TabNavigation/>
-      </NavigationContainer>
-      </SignedIn>
-      {/* SignOut  */}
-      <SignedOut>
+    
       <NavigationContainer>
         <LoginNavigation/>
       </NavigationContainer>
-      </SignedOut>
+
       <StatusBar style="auto" />
+      
     </View>
     </ClerkProvider>
   );

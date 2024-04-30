@@ -12,9 +12,7 @@ export default function HomeNavigation() {
     headerShown:false
    }}>
         <Stack.Screen name='home' component={HomeScreen} />
-        <Stack.Screen name='business-list' 
-        component={BusinessListByCategoryScreen}/>
-        <Stack.Screen name='business-detail' component={BusinessDetailsScreen} />
+        
    </Stack.Navigator>
   )
 }

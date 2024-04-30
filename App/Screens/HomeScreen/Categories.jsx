@@ -24,7 +24,8 @@ export default function Categories() {
       <Heading text={'Categories'} isViewAll={true} />
       <FlatList
       data={categories}
-      numColumns={4}
+      horizontal={true}
+      showsHorizontalScrollIndicator={false}
       renderItem={({item,index})=>index<=3&&(
         <TouchableOpacity style={styles.container}
         onPress={()=>navigation.push('business-list',{
@@ -47,11 +48,12 @@ export default function Categories() {
 const styles = StyleSheet.create({
   container:{
     flex:1,
-    alignItems:'center'
+    alignItems:'center',
   },
   iconContainer:{
     backgroundColor:Colors.LIGHT_GRAY,
     padding:17,
-    borderRadius:99
+    borderRadius:99,
+    marginHorizontal: 15
   }
 })

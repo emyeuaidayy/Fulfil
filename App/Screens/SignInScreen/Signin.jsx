@@ -1,15 +1,21 @@
 import React, {useRef, useEffect, useState } from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, PanResponder, Animated } from 'react-native';
-import { ScrollView } from 'react-native';
+import { ScrollView, Alert } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import * as WebBrowser from "expo-web-browser";
 import { useOAuth } from "@clerk/clerk-expo";
 import { useWarmUpBrowser } from '../../hooks/warmUpBrowser';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode, { jwtDecode } from 'jwt-decode';
+
+
+import "core-js/stable/atob"
 
 WebBrowser.maybeCompleteAuthSession();
 
-export default function SignIn() {
+const SignIn = () => {
+  
   useWarmUpBrowser();
     const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
     const onPress = React.useCallback(async () => {
@@ -27,6 +33,83 @@ export default function SignIn() {
           console.error("OAuth error", err);
         }
       }, []);
+
+      const [stateVariables, setStateVariables] = useState({
+        username: '',
+        password: '',
+      });
+    
+      const handleRegister = async () => {
+        const query = `
+          mutation {
+            login(input: {
+              username :"${stateVariables.username}",
+              password :"${stateVariables.password}"
+            }) {
+              token
+             
+           
+             
+              
+            }
+          }
+        `;
+    
+        const variables = {};
+    
+        try {
+          const res = await fetch('http://172.20.10.3:3000/graphql', {
+            method: 'POST',
+            headers: {  
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              query,
+              variables,
+            }),
+          });
+          
+    
+          const json = await res.json();
+          console.log(json.data.login);
+    
+          
+          
+          if (!json.errors) {
+            // Phản hồi thành công
+            console.log('Success:', json.data.login);
+            const token = json.data.login.token;
+    
+            
+            const decoded = jwtDecode(token);
+            console.log(decoded);
+  
+    
+            // Lưu trữ token vào AsyncStorage
+            await AsyncStorage.setItem('token', token);
+            
+
+            Alert.alert(
+              'Success',
+              'Login successful!',
+              [
+                { text: 'OK', onPress: () => {navigation.replace('TabNav')}}
+              ],
+              { cancelable: false }
+            );
+           
+          }
+          
+          
+        } catch (error) {
+          console.log(error);
+        }
+        
+      };
+    const handleSignUp = () => {
+        navigation.navigate ('AccountRegister')
+    }
+    
 
     const navigation = useNavigation();
         const pan = useRef(new Animated.ValueXY()).current;
@@ -53,21 +136,35 @@ export default function SignIn() {
   return (
     <ScrollView style={styles.Scroll} {...panResponder.panHandlers}>
     <View style={styles.container}>
+
     <Image source={require('../../../assets/images/Logo.png')} style={styles.avatar} resizeMode ='contain' />
     <Text style={styles.loginText}>Sign In</Text>
     <View style={styles.inputContainer}>
+
+
     <Text style={styles.Conttext1}>ID Name</Text>
     <TouchableOpacity style={styles.inputButton}>
-        <TextInput style={styles.inputText} placeholder="What is your ID name" />
+        <TextInput style={styles.inputText}
+        onChangeText={text => setStateVariables({...stateVariables, username: text})}
+        value={stateVariables.username} 
+        placeholder="What is your ID name" />
     </TouchableOpacity>
+
+
     <Text style={styles.Conttext2}>Password</Text>
     <TouchableOpacity style={styles.inputButton}>
-        <TextInput style={styles.inputText} placeholder="What is your password" secureTextEntry={true} />
+        <TextInput style={styles.inputText}
+        onChangeText={text => setStateVariables({...stateVariables, password: text})}
+        value={stateVariables.password}
+        secureTextEntry = {true} 
+        placeholder="What is your password"/>
     </TouchableOpacity>
+
+
     <TouchableOpacity onPress={()=>navigation.navigate('ForgotPass')}>
     <Text style={styles.forgotPass}>Forgot your password ?</Text>
     </TouchableOpacity>
-    <TouchableOpacity style={styles.loginButton} onPress={()=>navigation.replace('Home')}>
+    <TouchableOpacity style={styles.loginButton} onPress={handleRegister}>
         <Text style={styles.loginButtonText}>Login</Text>
     </TouchableOpacity>
     </View>
@@ -229,3 +326,5 @@ const styles = StyleSheet.create({
     height: '100%',
   },
 });
+
+export default SignIn;

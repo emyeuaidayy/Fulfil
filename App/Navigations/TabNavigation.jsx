@@ -4,19 +4,21 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../Screens/HomeScreen/HomeScreen';
 import ProfileScreen from '../Screens/ProfileScreen/ProfileScreen';
 import BookingScreen from '../Screens/BookingScreen/BookingScreen';
+import WorkBoard from '../Screens/WorkBoardScreen/WorkBoard';
 import { FontAwesome } from '@expo/vector-icons';
 import Colors from '../Utils/Colors';
-import HomeNavigation from './HomeNavigation';
-import BookingNavigation from './BookingNavigation';
+
 const Tab = createBottomTabNavigator();
 
+
 export default function TabNavigation() {
+
   return (
     <Tab.Navigator screenOptions={{
         headerShown:false,
         tabBarActiveTintColor:Colors.PRIMARY
     }}>
-       <Tab.Screen name='home' component={HomeNavigation}
+       <Tab.Screen name='home' component={HomeScreen}
        options={{
         tabBarLabel:({color})=>(
             <Text style={{color:color,fontSize:12,marginTop:-7}}>
@@ -27,24 +29,24 @@ export default function TabNavigation() {
         )
        }}
        /> 
-       <Tab.Screen name='booking' component={BookingNavigation} 
+       <Tab.Screen name='Booked' component={BookingScreen} 
        options={{
         tabBarLabel:({color})=>(
             <Text style={{color:color,fontSize:12,marginTop:-7}}>
                 Booking</Text>
         ),
         tabBarIcon:({color,size})=>(
-            <FontAwesome name="bookmark" size={size} color={color} />
+            <FontAwesome name="cart-plus" size={size} color={color} />
         )
        }}/> 
-       <Tab.Screen name='profile' component={ProfileScreen} 
+       <Tab.Screen name='Work' component={WorkBoard} 
        options={{
         tabBarLabel:({color})=>(
             <Text style={{color:color,fontSize:12,marginTop:-7}}>
-                Profile</Text>
+                WorkBoard</Text>
         ),
         tabBarIcon:({color,size})=>(
-            <FontAwesome name="user-circle" size={size} color={color} />
+            <FontAwesome name="clipboard" size={size} color={color} />
         )
        }}/> 
     </Tab.Navigator>
